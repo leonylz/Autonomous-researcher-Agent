@@ -1,0 +1,6 @@
+{"ts": 1787034216.6293402, "model": "deepseek-chat", "input_tokens": 898, "output_tokens": 265, "cost_usd": 0.000534, "actor": "leader", "action": "think"}
+{"ts": 1787034317.408751, "model": "deepseek-chat", "input_tokens": 1673, "output_tokens": 197, "cost_usd": 0.000668, "actor": "leader", "action": "reflect"}
+{"ts": 1787034321.620746, "model": "deepseek-chat", "input_tokens": 1240, "output_tokens": 306, "cost_usd": 0.000671, "actor": "leader", "action": "think"}
+{"ts": 1787034439.747269, "model": "deepseek-chat", "input_tokens": 3136, "output_tokens": 172, "cost_usd": 0.001036, "actor": "leader", "action": "reflect"}
+{"ts": 1787034443.7414954, "model": "deepseek-chat", "input_tokens": 1603, "output_tokens": 285, "cost_usd": 0.000746, "actor": "leader", "action": "think"}
+{"ts": 1787034466.8567076, "model": "deepseek-chat", "input_tokens": 2749, "output_tokens": 224, "cost_usd": 0.000989, "actor": "leader", "action": "reflect"}

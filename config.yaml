@@ -1,0 +1,156 @@
+# Deep Researcher Agent Configuration
+# See docs/architecture.md for detailed explanations
+
+project:
+  name: "my-research"
+  brief: "PROJECT_BRIEF.md"
+  workspace: "./workspace"
+
+execution:
+  # Where tools and training commands run:
+  #   "local" — current behavior; use project.workspace on this machine
+  #   "ssh"   — keep controller state local but run tools/training on one remote host
+  #   "slurm" — submit training to a Slurm cluster via a login node. The controller
+  #             stays local; jobs are submitted with `sbatch --parsable` over one
+  #             transient ssh call that exits immediately (no login-node process is
+  #             left running), and `sacct` is the sole liveness authority. File ops
+  #             reuse the ssh path (login node shares the NFS workspace).
+  mode: "local"
+  python: ""                      # 训练解释器绑定（环境一致性）：留空=自动探测本机
+                                  # torch+torchvision 齐全的 conda env；也可填绝对路径。
+                                  # launch 命令里的裸 `python` 会被系统层替换成它，
+                                  # 且干跑记录的解释器必须与它一致（否则拒绝训练）。
+  auto_create_env: true           # 探测不到任何现成环境时，自动创建项目级 venv
+                                  # （workspace/.trainenv）并安装 torch/torchvision
+                                  # （首次创建需下载，可能耗时数分钟）。不需要可关。
+  ssh_host: ""                    # Required when mode="ssh"/"slurm", e.g. "user@login-node"
+  remote_workspace: ""            # Required when mode="ssh"/"slurm", remote tool-visible workspace root
+  remote_python: "python3"        # Python used on the remote host for the helper shim
+  ssh_args: []                    # Optional extra ssh argv items, e.g. ["-p", "2222"]
+
+  # --- mode="slurm" only (ignored otherwise) ---
+  slurm_partition: ""             # Required in slurm mode: the partition/queue to submit to
+  slurm_time: ""                  # Required in slurm mode: --time wall limit, e.g. "24:00:00" or "2-00:00:00"
+  slurm_gpus_per_job: 1           # GPUs per job -> --gres=gpu:N (omit/0 to request none)
+  slurm_gres: ""                  # Raw --gres override (e.g. "gpu:a100:2"); takes precedence over slurm_gpus_per_job
+  slurm_qos: ""                   # Optional --qos
+  slurm_account: ""               # Optional --account
+  slurm_setup: ""                 # Optional shell line prepended to the job, e.g. "module load cuda/12.4"
+  slurm_extra_sbatch: []          # Optional extra #SBATCH directives, e.g. ["--nodes=1", "--cpus-per-task=8"]
+  slurm_unknown_grace_polls: 4    # Reap a job after this many consecutive unreachable sacct probes (anti-hang)
+  slurm_time_buffer: 1800         # Force-reap a job this many seconds past its --time (anti-hang backstop)
+  # NOTE: in slurm mode the launch_experiment `gpu` arg is IGNORED — Slurm assigns
+  # GPUs via --gres (slurm_gpus_per_job), so CUDA_VISIBLE_DEVICES is stripped from jobs.
+
+agent:
+  # Provider:
+  #   "anthropic"  — Anthropic-compatible SDK endpoint (default auth env: ANTHROPIC_API_KEY)
+  #   "openai"     — OpenAI-compatible SDK endpoint (default auth env: OPENAI_API_KEY)
+  #   "claude_cli" — subprocess, reuses Claude Code / Pro / Max subscription
+  #   "codex_cli"  — subprocess, reuses ChatGPT Plus / Pro subscription
+  #   domestic API presets (use a Chinese LLM API instead of a Claude/Codex subscription):
+  #     "deepseek" | "qwen"/"dashscope" | "kimi"/"moonshot" | "glm"/"zhipu"
+  #     Each preset auto-fills the OpenAI-compatible base_url and the default key env
+  #     (DEEPSEEK_API_KEY / DASHSCOPE_API_KEY / MOONSHOT_API_KEY / ZHIPUAI_API_KEY);
+  #     just set `model` to that vendor's model id. base_url/api_key_env stay overridable.
+  #     e.g.  provider: "deepseek"   model: "deepseek-chat"   (export DEEPSEEK_API_KEY)
+  #
+  # The *_cli options are much cheaper when running many agents in parallel
+  # because they share your existing subscription quota instead of per-token
+  # billing. They require the corresponding CLI to be installed and logged
+  # in once on this host.
+  #
+  # Tool-use compatibility: the worker path drives tools through a text-based
+  # <tool_call> protocol. Compatible providers: "anthropic", "openai",
+  # "claude_cli" (we force `--tools ""` so the CLI cannot bypass it).
+  # "codex_cli" cannot be forced into pure-text mode by any current CLI flag,
+  # so it will silently bypass the ToolRegistry and lose PID tracking. Use it
+  # for the leader/think path only; keep one of the three other providers for
+  # worker dispatches.
+  provider: "anthropic"
+
+  # Model selection per provider:
+  #   anthropic:  claude-sonnet-4-6 (fast) | claude-opus-4-6 (strongest)
+  #   openai:     codex-5.3 (fast)         | gpt-5.4 (strongest)
+  #                or any OpenAI-compatible model id such as qwen / glm / minimax
+  #   claude_cli: whichever model your `claude` CLI is configured to use
+  #   codex_cli:  whichever model your `codex` CLI is configured to use
+  model: "claude-sonnet-4-6"
+  base_url: ""                    # Optional compatible API endpoint override
+  api_key_env: ""                 # Optional custom key env, e.g. DASHSCOPE_API_KEY
+  auth_token_env: ""              # Optional bearer-token env for anthropic-compatible endpoints
+
+  max_cycles: -1                  # -1 = run forever
+  max_steps_per_cycle: 3          # Max worker dispatches per cycle
+  cooldown_interval: 300          # Smart cooldown polling interval (seconds)
+  no_progress_fallback_threshold: 3  # Back off after repeated no-progress cycles on the same plan
+  max_cycles_per_hour: 0          # Proactive anti-burn cap (0 = disabled): sleeps so the agent never exceeds this many cycles/hour
+
+# --- v2 autonomy (all additive & advisory; they enrich the THINK context) ---
+
+ledger:
+  # Append-only workspace/experiments.jsonl recording every cycle's hypothesis,
+  # metrics, and outcome. Survives crashes; zero LLM cost.
+  enabled: true
+  recent_in_context: 5            # How many recent experiments to show the leader
+  metric_key: ""                  # Primary metric to track, e.g. "accuracy"/"loss"/"fgd". Empty disables stagnation/gate signals.
+  metric_direction: "higher_better"  # "higher_better" or "lower_better"
+
+stagnation:
+  enabled: true                   # Requires ledger.metric_key
+  threshold_cycles: 3             # Flag stagnation after N measured cycles with no improvement
+  min_delta: 0.0                  # Minimum metric change that counts as improvement
+
+journal:
+  # Append-only DEAD_ENDS.md + INSIGHTS.md (never compacted; rotated to a dated
+  # .bak when oversized). The loop shows their tails to the leader.
+  enabled: true
+  max_chars: 4000                 # Rotate a journal to backup once it exceeds this
+  tail_in_context: 1500           # Chars of each journal tail to show the leader
+
+eval:
+  # Agent Eval 录制（零 LLM 成本）：把每次决策轨迹写入
+  # workspace/eval/recording.jsonl；离线用 scripts/eval_report.py
+  # 对照 golden dataset（workspace/eval/golden.jsonl）出评估报告。
+  enabled: true
+
+safety:
+  # Zero-cost violation scanner (pure functions over state.json + ledger).
+  enabled: true
+  fail_threshold: 3               # Flag after this many consecutive no-progress cycles
+  stale_state_hours: 6            # Flag if state has been "running" this long without an update
+
+gates:
+  # Advisory phase gate: tells the leader whether the best metric clears a bar.
+  enabled: false                  # Requires ledger.metric_key
+  threshold: 0.0
+  direction: "higher_better"
+
+memory:
+  brief_max_chars: 3000           # Tier 1: PROJECT_BRIEF cap
+  log_max_chars: 2000             # Tier 2: MEMORY_LOG cap
+  milestone_max_chars: 1200       # Key results section cap
+  max_recent_entries: 15          # Rolling decision count
+
+gpu:
+  auto_detect: true               # Auto-detect available GPUs
+  reserve_last: true              # Reserve last GPU for keep-alive
+
+monitor:
+  poll_interval: 900              # Check every 15 min during training
+  zero_llm: true                  # No LLM calls during monitoring
+  notify_on_complete: true        # Log notification on experiment completion
+
+experiment:
+  mandatory_dry_run: true         # Always dry-run before real training
+  max_parallel: 1                 # Max concurrent experiments
+  log_tail_lines: 50              # Lines to capture from training log
+
+obsidian:
+  enabled: false                  # Enable progress exports
+  vault_path: ""                  # Optional: direct write into Obsidian vault
+  project_subdir: "DeepResearcher/{project_name}"
+  dashboard_note: "Dashboard.md"
+  daily_dir: "Daily"
+  auto_append_daily: true
+  local_fallback_dir: "progress_tracking"

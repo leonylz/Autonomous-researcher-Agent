@@ -1,0 +1,9 @@
+{
+  "id": "T1",
+  "name": "MNIST CNN from scratch to 99.5%+",
+  "difficulty": "medium",
+  "brief": "PROJECT_BRIEF.md",
+  "target": {"metric": "test_acc", "operator": ">=", "value": 0.995},
+  "budget": {"max_cycles": 5, "max_cost_usd": 0.5, "max_wall_hours": 3},
+  "golden": "golden.jsonl"
+}

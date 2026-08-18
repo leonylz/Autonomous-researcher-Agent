@@ -1,0 +1,9 @@
+{
+  "id": "T2",
+  "name": "CIFAR-10 ResNet-18 from scratch to 85%+",
+  "difficulty": "medium",
+  "brief": "PROJECT_BRIEF.md",
+  "target": {"metric": "test_acc", "operator": ">=", "value": 0.85},
+  "budget": {"max_cycles": 6, "max_cost_usd": 1.0, "max_wall_hours": 8},
+  "golden": "golden.jsonl"
+}

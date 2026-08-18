@@ -1,0 +1,10 @@
+﻿project:
+  name: "smoke-project"
+agent:
+  provider: "deepseek"
+  model: "deepseek-chat"
+  max_cycles: 3
+execution:
+  python: "D:/Anaconda/python.exe"
+monitor:
+  poll_interval: 15

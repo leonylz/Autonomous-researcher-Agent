@@ -1,0 +1,29 @@
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
+.env
+.venv
+venv/
+workspace/
+*.log
+.cycle_counter
+*.pt
+*.pth
+*.ckpt
+*.bin
+.DS_Store
+
+!docs/smoke_evidence/**/*.log  # 冒烟证据的训练日志(METRIC_JSON 契约行)需要入库
+
+# 本地数据集缓存(不入库,体积大)
+examples/eval_tasks/*/CIFAR-10/
+examples/eval_tasks/*/workspace/data/
+
+# 评测数据/知识库(体积大,脚本可重建)
+docs/scidocs_data/
+docs/rag_kb/

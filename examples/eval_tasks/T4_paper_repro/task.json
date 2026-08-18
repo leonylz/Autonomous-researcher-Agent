@@ -1,0 +1,11 @@
+{
+  "id": "T4",
+  "name": "Reproduce a paper method (Mixup + cosine schedule)",
+  "difficulty": "hard",
+  "brief": "PROJECT_BRIEF.md",
+  "target": {"metric": "test_acc", "operator": ">=", "value": 0.88},
+  "budget": {"max_cycles": 6, "max_cost_usd": 1.2, "max_wall_hours": 10},
+  "golden": "golden.jsonl",
+  "requires_rag": true,
+  "requires_innovation": true
+}

@@ -1,0 +1,10 @@
+{
+  "id": "T6",
+  "name": "CIFAR-10 创新方法验证(论文驱动: mixup/CutMix/SGDR)",
+  "difficulty": "hard",
+  "brief": "PROJECT_BRIEF.md",
+  "target": {"metric": "test_acc", "operator": ">=", "value": 0.83},
+  "budget": {"max_cycles": 6, "max_cost_usd": 0.8, "max_wall_hours": 8},
+  "requires_innovation": true,
+  "golden": "golden.jsonl"
+}

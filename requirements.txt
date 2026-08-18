@@ -1,0 +1,24 @@
+# LLM Providers (install at least one)
+anthropic>=0.40.0    # For Claude Sonnet 4.6 / Opus 4.6
+openai>=1.30.0       # For Codex 5.3 / GPT 5.4
+
+# Agent framework (核心依赖：nodes.py 直接 import)
+langgraph>=1.0
+langchain>=1.0
+langchain-core>=1.0
+langchain-openai>=1.0
+
+# Core
+pyyaml>=6.0
+python-dotenv>=1.0
+pydantic>=2.0
+
+# Optional — Dashboard 监控面板（python -m core.dashboard）
+# fastapi>=0.110
+# uvicorn>=0.29
+
+# Optional — 跨项目语义记忆（CrossProjectStore，缺失时自动 fallback 到 hash 编码）
+# sentence-transformers>=2.2
+
+# Optional — FAISS 向量检索（CrossProjectStore 加速，缺失时自动 fallback 到暴力搜索）
+# faiss-cpu>=1.7

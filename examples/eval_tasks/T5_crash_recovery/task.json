@@ -1,0 +1,9 @@
+{
+  "id": "T5",
+  "name": "Crash detection and recovery",
+  "difficulty": "hard",
+  "brief": "PROJECT_BRIEF.md",
+  "target": {"metric": "test_acc", "operator": ">=", "value": 0.70},
+  "budget": {"max_cycles": 6, "max_cost_usd": 1.0, "max_wall_hours": 8},
+  "golden": "golden.jsonl"
+}

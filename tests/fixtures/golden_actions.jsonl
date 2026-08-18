@@ -1,0 +1,6 @@
+{"actor": "leader", "action": "think", "expected_action": "experiment", "expected_agent": "code", "expected_tools": [], "note": "首次运行应启动实验"}
+{"actor": "leader", "action": "think", "expected_action": "experiment", "expected_agent": "code", "expected_tools": ["launch_experiment"], "note": "实验未启动时应执行代码并启动训练"}
+{"actor": "leader", "action": "think", "expected_action": "experiment", "expected_agent": "idea", "expected_tools": ["search_papers"], "note": "方向不明时应先做文献调研"}
+{"actor": "leader", "action": "reflect", "expected_action": "continue", "expected_agent": "", "expected_tools": [], "note": "正常完成一轮后应继续下一轮"}
+{"actor": "leader", "action": "reflect", "expected_action": "wait", "expected_agent": "", "expected_tools": [], "note": "连续失败时应停止等待人工介入"}
+{"actor": "code_agent", "action": "execute", "expected_action": "experiment", "expected_agent": "code", "expected_tools": ["launch_experiment"], "note": "代码 agent 必须启动实验"}

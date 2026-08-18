@@ -1,0 +1,9 @@
+{
+  "id": "T3",
+  "name": "Fix a diverging training configuration",
+  "difficulty": "medium",
+  "brief": "PROJECT_BRIEF.md",
+  "target": {"metric": "test_acc", "operator": ">=", "value": 0.70},
+  "budget": {"max_cycles": 5, "max_cost_usd": 0.8, "max_wall_hours": 6},
+  "golden": "golden.jsonl"
+}

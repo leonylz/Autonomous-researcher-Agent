@@ -1,0 +1,27 @@
+METRIC_JSON {"epoch": 1, "loss": 0.850477, "test_acc": 0.9935}
+Epoch 1/10 | loss=0.8505 | test_acc=0.9935 | 7.3s
+  [Checkpoint] 已保存: checkpoints\best_model.pth
+METRIC_JSON {"epoch": 2, "loss": 0.269651, "test_acc": 0.998}
+Epoch 2/10 | loss=0.2697 | test_acc=0.9980 | 0.4s
+  [Checkpoint] 已保存: checkpoints\best_model.pth
+METRIC_JSON {"epoch": 3, "loss": 0.096216, "test_acc": 0.9985}
+Epoch 3/10 | loss=0.0962 | test_acc=0.9985 | 0.3s
+  [Checkpoint] 已保存: checkpoints\best_model.pth
+METRIC_JSON {"epoch": 4, "loss": 0.047381, "test_acc": 0.999}
+Epoch 4/10 | loss=0.0474 | test_acc=0.9990 | 0.2s
+  [Checkpoint] 已保存: checkpoints\best_model.pth
+METRIC_JSON {"epoch": 5, "loss": 0.030847, "test_acc": 0.999}
+Epoch 5/10 | loss=0.0308 | test_acc=0.9990 | 0.4s
+  [Checkpoint] 已保存: checkpoints\checkpoint_epoch_5.pth
+METRIC_JSON {"epoch": 6, "loss": 0.023285, "test_acc": 0.999}
+Epoch 6/10 | loss=0.0233 | test_acc=0.9990 | 0.4s
+METRIC_JSON {"epoch": 7, "loss": 0.018781, "test_acc": 0.999}
+Epoch 7/10 | loss=0.0188 | test_acc=0.9990 | 0.2s
+METRIC_JSON {"epoch": 8, "loss": 0.016083, "test_acc": 0.999}
+Epoch 8/10 | loss=0.0161 | test_acc=0.9990 | 0.1s
+METRIC_JSON {"epoch": 9, "loss": 0.013922, "test_acc": 0.999}
+Epoch 9/10 | loss=0.0139 | test_acc=0.9990 | 0.1s
+METRIC_JSON {"epoch": 10, "loss": 0.012353, "test_acc": 0.999}
+Epoch 10/10 | loss=0.0124 | test_acc=0.9990 | 0.1s
+  [Checkpoint] 已保存: checkpoints\checkpoint_epoch_10.pth
+Training finished. best_acc=0.9990
